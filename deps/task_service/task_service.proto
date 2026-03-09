@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package pet_api;
+import "empty.proto";
+
+option go_package = "pkg/repo";
+
+
+service TaskService {
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+  rpc FinishTask(FinishTaskRequest) returns (google.protobuf.Empty);
+  rpc DeleteTask(DeleteTaskRequest) returns (google.protobuf.Empty);
+  rpc GetTask(GetTaskRequest) returns (GetTaskResponse);
+  rpc GetListOfTasks(GetListOfTasksRequest) returns (GetListOfTasksResponse);
+}
+
+message CreateTaskRequest {
+  string userID = 1;
+  string Description = 2;
+  Status status = 3;
+}
+message CreateTaskResponse {
+  string ID = 1;
+}
+
+message FinishTaskRequest {
+  string taskID = 1;
+  string userID = 2;
+}
+
+message DeleteTaskRequest {
+  string taskID = 1;
+  string userID = 2;
+}
+
+message GetTaskRequest {
+  string taskID = 1;
+  string userID = 2;
+}
+message GetTaskResponse {
+   string ID = 1;
+   string Description = 2;
+   Status status = 3;
+}
+
+message GetListOfTasksResponse {
+  repeated GetTaskResponse tasks = 1;
+}
+message GetListOfTasksRequest {
+  string userID = 1;
+}
+
+enum Status {
+  STATUS_CANCELLED = 0;
+  STATUS_CREATED = 1;
+}
+

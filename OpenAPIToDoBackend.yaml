@@ -1,0 +1,236 @@
+openapi: 3.0.3
+
+info:
+  title: task-Backend API
+  version: 1.0.0
+  description:
+    Описание всего функционала ToDO-Backend API
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /task/create:
+    post:
+      summary: Добавляет новую задачу
+      operationId: HandleCreateTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTaskResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+  /task/delete:
+    delete:
+      summary: Удалить задачу
+      operationId: HandleDeleteTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteTaskRequest'
+      responses:
+        '204':
+          description: ОК
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /task/finish:
+    patch:
+      summary: Завершить задачу
+      operationId: HandleFinishTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FinishTaskRequest'
+      responses:
+        '204':
+          description: ОК
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /task/get:
+    get:
+      summary: Получить задачу
+      operationId: HandleGetTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetTaskRequest'
+      responses:
+        200:
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTaskResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /task/get_list:
+    get:
+      summary: Получить список задач
+      operationId: HandleGetListOfTasks
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetListOfTasksRequest'
+      responses:
+        '200':
+          description: Успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetListOfTasksResponse'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  schemas:
+    Error:
+      type: object
+      required: [ code, message ]
+      properties:
+        code:
+          type: string
+          example: INVALID_ARGUMENT
+        message:
+          type: string
+          example: "uuid is required"
+    Task:
+      type: object
+      properties:
+        description:
+          type: string
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+    TaskStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - new
+            - finished
+    CreateTaskRequest:
+      type: object
+      required: [user_uuid,title,description]
+      properties:
+        user_uuid:
+          type: string
+          format: uuid
+        description:
+          type: string
+        title:
+          type: string
+    CreateTaskResponse:
+      type: object
+      required: [task_uuid]
+      properties:
+        task_uuid:
+          type: string
+          format: uuid
+    DeleteTaskRequest:
+      type: object
+      required: [task_uuid,user_uuid]
+      properties:
+        task_uuid:
+          type: string
+          format: uuid
+        user_uuid:
+          type: string
+          format: uuid
+    GetTaskRequest:
+      type: object
+      required: [user_uuid,task_uuid]
+      properties:
+        task_uuid:
+          type: string
+          format: uuid
+        user_uuid:
+          type: string
+          format: uuid
+    GetTaskResponse:
+      type: object
+      required: [title,description,status]
+      properties:
+        description:
+          type: string
+        title:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
+    FinishTaskRequest:
+      type: object
+      required: [user_uuid,task_uuid]
+      properties:
+        user_uuid:
+          type: string
+          format: uuid
+        task_uuid:
+          type: string
+          format: uuid
+    GetListOfTasksRequest:
+      type: object
+      required: [user_uuid]
+      properties:
+        user_uuid:
+          type: string
+          format: uuid
+    GetListOfTasksResponse:
+      type: object
+      required: [tasks]
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+  responses:
+    BadRequest:
+      description: Неверный запрос
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Ресурс не найден
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    InternalError:
+      description: Внутренняя ошибка
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
