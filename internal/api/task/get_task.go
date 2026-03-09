@@ -8,20 +8,26 @@ import (
 	api "todo-backend/pkg/openapi"
 )
 
-func (a *Api) HandleGetTask(ctx context.Context, request api.HandleGetTaskRequestObject) (api.HandleGetTaskResponseObject, error) {
-	task, err := a.usecase.GetTask(ctx, request.Body.UserUuid.String(), request.Body.TaskUuid.String())
+func (a *TaskServer) HandleGetTask(ctx context.Context, req *api.GetTaskRequest) (api.HandleGetTaskRes, error) {
+	task, err := a.useCase.GetTask(ctx, req.UserUUID.String(), req.TaskUUID.String())
 	if err != nil {
 		if errors.Is(err, entity.ErrNotFound) {
-			return api.HandleGetTask404JSONResponse{api.NotFoundJSONResponse{
-				Code:    "Not found",
-				Message: "either task_uuid or user_uuid not exist",
-			}}, nil
+			return &api.HandleGetTaskNotFound{
+				Code:    "NOT_FOUND",
+				Message: err.Error(),
+			}, nil
 		}
-		return api.HandleGetTask404JSONResponse{api.NotFoundJSONResponse{
-			Code:    "server error",
-			Message: "if was not your fault",
-		}}, nil
+		return &api.HandleGetTaskInternalServerError{
+			Code:    "INTERNAL_ERROR",
+			Message: err.Error(),
+		}, nil
 	}
-	log.Printf("user`s %v got task %v", request.Body.UserUuid, request.Body.TaskUuid)
-	return api.HandleGetTask200JSONResponse{Description: task.Description, Title: task.Title, Status: convertTaskStatus(task.Status)}, nil
+	log.Printf("user`s %v got task %v", req.UserUUID, req.TaskUUID)
+	return &api.Task{
+		Description: api.NewOptString(task.Description),
+		Title:       api.NewOptString(task.Title),
+		Status:      api.NewOptTaskStatus(convertTaskStatus(task.Status)),
+		UserUUID:    api.NewOptUUID(task.UserUUID),
+		TaskUUID:    api.NewOptNilUUID(task.TaskUUID),
+	}, nil
 }

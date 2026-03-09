@@ -5,9 +5,9 @@ import (
 )
 
 type Task struct {
-	ID          uuid.UUID  `json:"id"`
+	TaskUUID    uuid.UUID  `json:"id"`
 	Title       string     `json:"title"`
-	UserID      uuid.UUID  `json:"user_id"`
+	UserUUID    uuid.UUID  `json:"user_id"`
 	Description string     `json:"description"`
 	Status      TaskStatus `json:"status"`
 }

@@ -2,22 +2,51 @@ package main
 
 import (
 	"context"
+	"log"
+	"net"
 	"net/http"
-	"pet_api/internal/api/ToDo"
+	"os"
+	task2 "todo-backend/internal/api/task"
+	"todo-backend/internal/client/task_service/handlers"
+	"todo-backend/internal/usecase/task"
+	"todo-backend/pkg/openapi"
+	"todo-backend/pkg/task_service"
 
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
+	"github.com/joho/godotenv"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
-
-//TIP <p>To run your code, right-click the code and select <b>Run</b>.</p> <p>Alternatively, click
-// the <icon src="AllIcons.Actions.Execute"/> icon in the gutter and select the <b>Run</b> menu item from here.</p>
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	http.Handler()
-	r.Get("/{id}", ToDo.GetTask(ctx, id))
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	host, port := os.Getenv("TASK_SERVICE_CLIENT_HOST"), os.Getenv("TASK_SERVICE_CLIENT_PORT")
+	address := net.JoinHostPort(host, port)
+	conn, err := initTaskServiceGRPCConnection(ctx, address)
+	if err != nil {
+		log.Printf("failed to make connection")
+	}
+	generatedClient := task_service.NewTaskServiceClient(conn)
+	taskServiceClient := handlers.NewTaskServiceClient(generatedClient)
+	usecase := task.NewToDoBackendUsecase(taskServiceClient)
+	api := task2.NewApi(usecase)
+	openapi.Handler(api)
+}
+func initTaskServiceGRPCConnection(ctx context.Context, addr string) (*grpc.ClientConn, error) {
+	conn, err := grpc.DialContext(
+		ctx,
+		addr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithBlock(),
+	)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
 }

@@ -4,27 +4,26 @@ import (
 	"context"
 	"errors"
 	"log"
-
 	"todo-backend/internal/entity"
 	api "todo-backend/pkg/openapi"
 )
 
-func (a *Api) HandleGetListOfTasks(ctx context.Context, request api.HandleGetListOfTasksRequestObject) (api.HandleGetListOfTasksResponseObject, error) {
-	tasks, err := a.usecase.GetListOfTasks(ctx, request.Body.UserUuid.String())
+func (a *TaskServer) HandleGetListOfTasks(ctx context.Context, req *api.GetListOfTasksRequest) (api.HandleGetListOfTasksRes, error) {
+	tasks, err := a.useCase.GetListOfTasks(ctx, req.UserUUID.String())
 	if err != nil {
 		if errors.Is(err, entity.ErrNotFound) {
-			return api.HandleGetListOfTasks404JSONResponse{api.NotFoundJSONResponse{
-				Code:    "Not found",
-				Message: "user_id not exist",
-			}}, nil
+			return &api.HandleGetListOfTasksNotFound{
+				Code:    "NOT FOUND",
+				Message: err.Error(),
+			}, nil
 		}
-		return api.HandleGetListOfTasks404JSONResponse{api.NotFoundJSONResponse{
-			Code:    "server error",
-			Message: "if was not your fault",
-		}}, nil
+		return &api.HandleGetListOfTasksInternalServerError{
+			Code:    "INTERNAL ERROR",
+			Message: err.Error(),
+		}, nil
 	}
-	log.Printf("tasks`s list %v of user %v ", tasks, request.Body.UserUuid.String())
-	return api.HandleGetListOfTasks200JSONResponse{Tasks: convert(tasks)}, nil
+	log.Printf("tasks`s list %v of user %v ", tasks, req.UserUUID.String())
+	return &api.GetListOfTasksResponse{Tasks: convert(tasks)}, nil
 }
 
 func convert(tasks []entity.Task) []api.Task {
@@ -32,20 +31,19 @@ func convert(tasks []entity.Task) []api.Task {
 	for _, task := range tasks {
 		status := convertTaskStatus(task.Status)
 		converted = append(converted, api.Task{
-			Description: &task.Description,
-			Title:       &task.Title,
-			Status:      &status,
+			Description: api.NewOptString(task.Description),
+			Title:       api.NewOptString(task.Title),
+			UserUUID:    api.NewOptUUID(task.UserUUID),
+			Status:      api.NewOptTaskStatus(status),
 		})
 	}
 	return converted
 }
 func convertTaskStatus(status entity.TaskStatus) api.TaskStatus {
 	switch status {
-	case "new":
-		temp := api.New
-		return api.TaskStatus{Status: &temp}
+	case entity.TaskStatusNew:
+		return api.TaskStatusNew
 	default:
-		temp := api.Finished
-		return api.TaskStatus{Status: &temp}
+		return api.TaskStatusFinished
 	}
 }

@@ -1,0 +1,7 @@
+# oapi-codegen.yaml
+package: api
+generate:
+  - types
+  - strict-server
+  - spec
+output: api/api.gen.go

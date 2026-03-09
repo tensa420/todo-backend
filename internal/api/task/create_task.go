@@ -9,23 +9,26 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *Api) HandleCreateTask(ctx context.Context, request api.HandleCreateTaskRequestObject) (api.HandleCreateTaskResponseObject, error) {
-	id, err := s.usecase.CreateTask(ctx, entity.Task{
-		Description: request.Body.Description,
-		Title:       request.Body.Title,
-		UserID:      request.Body.UserUuid,
-		Status:      entity.TaskStatusNew,
-	})
+func (s *TaskServer) HandleCreateTask(ctx context.Context, req *api.Task) (api.HandleCreateTaskRes, error) {
+	taskUUID, err := s.useCase.CreateTask(ctx, TaskToEntityFromAPI(req))
 	if err != nil {
 		log.Printf("failed to create task: %v", err)
-		return api.HandleCreateTask500JSONResponse{api.InternalErrorJSONResponse{
-			Code:    "INTERNAL_ERROR",
-			Message: "failed to create task",
-		}}, nil
+		return &api.HandleCreateTaskInternalServerError{
+			Code:    "INTERNAL ERROR",
+			Message: err.Error(),
+		}, nil
 	}
 
-	log.Printf("user %v created task: %v", request.Body.UserUuid.String(), id)
-	return api.HandleCreateTask201JSONResponse{
-		TaskUuid: uuid.MustParse(id),
-	}, nil
+	log.Printf("user %v created task: %v", req.UserUUID, taskUUID)
+	return &api.CreateTaskResponse{TaskUUID: uuid.MustParse(taskUUID)}, nil
+}
+
+func TaskToEntityFromAPI(req *api.Task) entity.Task {
+	return entity.Task{
+		Description: req.Description.Value,
+		Title:       req.Title.Value,
+		UserUUID:    req.UserUUID.Value,
+		TaskUUID:    req.TaskUUID.Value,
+		Status:      entity.TaskStatusNew,
+	}
 }

@@ -7,3 +7,7 @@ import (
 type ToDoBackendUsecase struct {
 	taskService task_service2.TaskService
 }
+
+func NewToDoBackendUsecase(taskService task_service2.TaskService) *ToDoBackendUsecase {
+	return &ToDoBackendUsecase{taskService: taskService}
+}

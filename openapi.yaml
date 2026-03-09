@@ -136,26 +136,19 @@ components:
         title:
           type: string
         status:
-          $ref: '#/components/schemas/TaskStatus'
-    TaskStatus:
-      type: object
-      properties:
-        status:
           type: string
           enum:
             - new
             - finished
-    CreateTaskRequest:
-      type: object
-      required: [user_uuid,title,description]
-      properties:
+        task_uuid:
+          nullable: true
+          type: string
+          format: uuid
         user_uuid:
           type: string
           format: uuid
-        description:
-          type: string
-        title:
-          type: string
+    CreateTaskRequest:
+      $ref: '#/components/schemas/Task'
     CreateTaskResponse:
       type: object
       required: [task_uuid]
@@ -184,15 +177,7 @@ components:
           type: string
           format: uuid
     GetTaskResponse:
-      type: object
-      required: [title,description,status]
-      properties:
-        description:
-          type: string
-        title:
-          type: string
-        status:
-          $ref: '#/components/schemas/TaskStatus'
+      $ref: '#/components/schemas/Task'
     FinishTaskRequest:
       type: object
       required: [user_uuid,task_uuid]

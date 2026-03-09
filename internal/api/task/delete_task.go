@@ -8,20 +8,20 @@ import (
 	api "todo-backend/pkg/openapi"
 )
 
-func (s *Api) HandleDeleteTask(ctx context.Context, request api.HandleDeleteTaskRequestObject) (api.HandleDeleteTaskResponseObject, error) {
-	err := s.usecase.DeleteTask(ctx, request.Body.UserUuid.String(), request.Body.TaskUuid.String())
+func (s *TaskServer) HandleDeleteTask(ctx context.Context, req *api.DeleteTaskRequest) (api.HandleDeleteTaskRes, error) {
+	err := s.useCase.DeleteTask(ctx, req.UserUUID.String(), req.TaskUUID.String())
 	if err != nil {
 		if errors.Is(err, entity.ErrNotFound) {
-			return api.HandleDeleteTask404JSONResponse{api.NotFoundJSONResponse{
-				Code:    "Not found",
-				Message: "either task_id or user_id not exist",
-			}}, nil
+			return &api.HandleDeleteTaskNotFound{
+				Code:    "NOT FOUND",
+				Message: err.Error(),
+			}, nil
 		}
-		return api.HandleDeleteTask500JSONResponse{api.InternalErrorJSONResponse{
-			Code:    "server error",
-			Message: "if was not your fault",
-		}}, nil
+		return &api.HandleDeleteTaskInternalServerError{
+			Code:    "INTERNAL ERROR",
+			Message: err.Error(),
+		}, nil
 	}
-	log.Printf("user %v deleted task %v", request.Body.UserUuid.String(), request.Body.TaskUuid.String())
-	return api.HandleDeleteTask204Response{}, nil
+	log.Printf("user %v deleted task %v", req.UserUUID.String(), req.TaskUUID.String())
+	return &api.HandleDeleteTaskNoContent{}, nil
 }
