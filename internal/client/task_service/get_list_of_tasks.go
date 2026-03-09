@@ -1,0 +1,35 @@
+package task_service
+
+import (
+	"context"
+	"log"
+	"todo-backend/internal/entity"
+	"todo-backend/pkg/task_service"
+
+	"github.com/google/uuid"
+)
+
+func (r *TaskServiceClient) GetListOfTasks(ctx context.Context, userID string) ([]entity.Task, error) {
+	resp, err := r.generatedClient.GetListOfTasks(ctx, &task_service.GetListOfTasksRequest{
+		UserID: userID,
+	})
+	if resp == nil || len(resp.Tasks) == 0 {
+		return []entity.Task{}, nil
+	}
+	if err != nil {
+		return nil, entity.ErrInternalServerError
+	}
+
+	tasks := make([]entity.Task, 0, len(resp.Tasks))
+	for _, task := range resp.GetTasks() {
+		tasks = append(tasks, entity.Task{
+			Status:      ConvertProtoStatusToEntityStatus(task.Status.String()),
+			Description: task.Description,
+			Title:       task.Title,
+			ID:          uuid.MustParse(task.ID),
+		})
+	}
+
+	log.Printf("get list tasks %v", userID)
+	return tasks, nil
+}

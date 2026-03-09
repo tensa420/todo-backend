@@ -3,7 +3,7 @@ syntax = "proto3";
 package pet_api;
 import "empty.proto";
 
-option go_package = "pkg/repo";
+option go_package = "pkg/task_service";
 
 
 service TaskService {
@@ -18,6 +18,7 @@ message CreateTaskRequest {
   string userID = 1;
   string Description = 2;
   Status status = 3;
+  string title = 4;
 }
 message CreateTaskResponse {
   string ID = 1;
@@ -41,6 +42,7 @@ message GetTaskResponse {
    string ID = 1;
    string Description = 2;
    Status status = 3;
+   string title = 4;
 }
 
 message GetListOfTasksResponse {
@@ -51,7 +53,7 @@ message GetListOfTasksRequest {
 }
 
 enum Status {
-  STATUS_CANCELLED = 0;
-  STATUS_CREATED = 1;
+  STATUS_NEW = 0;
+  STATUS_FINISHED = 1;
 }
 

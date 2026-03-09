@@ -4,6 +4,6 @@ import "errors"
 
 var (
 	ErrNotFound            = errors.New("not found")
-	ErrBadRequest          = errors.New("bad request")
+	ErrUnexpected          = errors.New("unexpected error")
 	ErrInternalServerError = errors.New("internal server error")
 )

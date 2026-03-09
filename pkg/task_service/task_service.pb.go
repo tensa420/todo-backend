@@ -7,13 +7,12 @@
 package task_service
 
 import (
-	reflect "reflect"
-	sync "sync"
-	unsafe "unsafe"
-
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	reflect "reflect"
+	sync "sync"
+	unsafe "unsafe"
 )
 
 const (
@@ -26,19 +25,19 @@ const (
 type Status int32
 
 const (
-	Status_STATUS_CANCELLED Status = 0
-	Status_STATUS_CREATED   Status = 1
+	Status_STATUS_NEW      Status = 0
+	Status_STATUS_FINISHED Status = 1
 )
 
 // Enum value maps for Status.
 var (
 	Status_name = map[int32]string{
-		0: "STATUS_CANCELLED",
-		1: "STATUS_CREATED",
+		0: "STATUS_NEW",
+		1: "STATUS_FINISHED",
 	}
 	Status_value = map[string]int32{
-		"STATUS_CANCELLED": 0,
-		"STATUS_CREATED":   1,
+		"STATUS_NEW":      0,
+		"STATUS_FINISHED": 1,
 	}
 )
 
@@ -72,8 +71,9 @@ func (Status) EnumDescriptor() ([]byte, []int) {
 type CreateTaskRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserID        string                 `protobuf:"bytes,1,opt,name=userID,proto3" json:"userID,omitempty"`
-	Description   string `protobuf:"bytes,2,opt,name=Description,proto3" json:"Description,omitempty"`
-	Status        Status `protobuf:"varint,3,opt,name=status,proto3,enum=pet_api.Status" json:"status,omitempty"`
+	Description   string                 `protobuf:"bytes,2,opt,name=Description,proto3" json:"Description,omitempty"`
+	Status        Status                 `protobuf:"varint,3,opt,name=status,proto3,enum=pet_api.Status" json:"status,omitempty"`
+	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -126,7 +126,14 @@ func (x *CreateTaskRequest) GetStatus() Status {
 	if x != nil {
 		return x.Status
 	}
-	return Status_STATUS_CANCELLED
+	return Status_STATUS_NEW
+}
+
+func (x *CreateTaskRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 type CreateTaskResponse struct {
@@ -332,8 +339,9 @@ func (x *GetTaskRequest) GetUserID() string {
 type GetTaskResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ID            string                 `protobuf:"bytes,1,opt,name=ID,proto3" json:"ID,omitempty"`
-	Description   string `protobuf:"bytes,2,opt,name=Description,proto3" json:"Description,omitempty"`
-	Status        Status `protobuf:"varint,3,opt,name=status,proto3,enum=pet_api.Status" json:"status,omitempty"`
+	Description   string                 `protobuf:"bytes,2,opt,name=Description,proto3" json:"Description,omitempty"`
+	Status        Status                 `protobuf:"varint,3,opt,name=status,proto3,enum=pet_api.Status" json:"status,omitempty"`
+	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -386,7 +394,14 @@ func (x *GetTaskResponse) GetStatus() Status {
 	if x != nil {
 		return x.Status
 	}
-	return Status_STATUS_CANCELLED
+	return Status_STATUS_NEW
+}
+
+func (x *GetTaskResponse) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
 }
 
 type GetListOfTasksResponse struct {
@@ -481,11 +496,12 @@ var File_task_service_proto protoreflect.FileDescriptor
 
 const file_task_service_proto_rawDesc = "" +
 	"\n" +
-	"\x12task_service.proto\x12\apet_api\x1a\vempty.proto\"v\n" +
+	"\x12task_service.proto\x12\apet_api\x1a\vempty.proto\"\x8c\x01\n" +
 	"\x11CreateTaskRequest\x12\x16\n" +
 	"\x06userID\x18\x01 \x01(\tR\x06userID\x12 \n" +
 	"\vDescription\x18\x02 \x01(\tR\vDescription\x12'\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x0f.pet_api.StatusR\x06status\"$\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x0f.pet_api.StatusR\x06status\x12\x14\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\"$\n" +
 	"\x12CreateTaskResponse\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\"C\n" +
 	"\x11FinishTaskRequest\x12\x16\n" +
@@ -496,18 +512,20 @@ const file_task_service_proto_rawDesc = "" +
 	"\x06userID\x18\x02 \x01(\tR\x06userID\"@\n" +
 	"\x0eGetTaskRequest\x12\x16\n" +
 	"\x06taskID\x18\x01 \x01(\tR\x06taskID\x12\x16\n" +
-	"\x06userID\x18\x02 \x01(\tR\x06userID\"l\n" +
+	"\x06userID\x18\x02 \x01(\tR\x06userID\"\x82\x01\n" +
 	"\x0fGetTaskResponse\x12\x0e\n" +
 	"\x02ID\x18\x01 \x01(\tR\x02ID\x12 \n" +
 	"\vDescription\x18\x02 \x01(\tR\vDescription\x12'\n" +
-	"\x06status\x18\x03 \x01(\x0e2\x0f.pet_api.StatusR\x06status\"H\n" +
+	"\x06status\x18\x03 \x01(\x0e2\x0f.pet_api.StatusR\x06status\x12\x14\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\"H\n" +
 	"\x16GetListOfTasksResponse\x12.\n" +
 	"\x05tasks\x18\x01 \x03(\v2\x18.pet_api.GetTaskResponseR\x05tasks\"/\n" +
 	"\x15GetListOfTasksRequest\x12\x16\n" +
-	"\x06userID\x18\x01 \x01(\tR\x06userID*2\n" +
-	"\x06Status\x12\x14\n" +
-	"\x10STATUS_CANCELLED\x10\x00\x12\x12\n" +
-	"\x0eSTATUS_CREATED\x10\x012\xe9\x02\n" +
+	"\x06userID\x18\x01 \x01(\tR\x06userID*-\n" +
+	"\x06Status\x12\x0e\n" +
+	"\n" +
+	"STATUS_NEW\x10\x00\x12\x13\n" +
+	"\x0fSTATUS_FINISHED\x10\x012\xe9\x02\n" +
 	"\vTaskService\x12E\n" +
 	"\n" +
 	"CreateTask\x12\x1a.pet_api.CreateTaskRequest\x1a\x1b.pet_api.CreateTaskResponse\x12@\n" +
@@ -516,8 +534,7 @@ const file_task_service_proto_rawDesc = "" +
 	"\n" +
 	"DeleteTask\x12\x1a.pet_api.DeleteTaskRequest\x1a\x16.google.protobuf.Empty\x12<\n" +
 	"\aGetTask\x12\x17.pet_api.GetTaskRequest\x1a\x18.pet_api.GetTaskResponse\x12Q\n" +
-	"\x0eGetListOfTasks\x12\x1e.pet_api.GetListOfTasksRequest\x1a\x1f.pet_api.GetListOfTasksResponseB\n" +
-	"Z\bpkg/repob\x06proto3"
+	"\x0eGetListOfTasks\x12\x1e.pet_api.GetListOfTasksRequest\x1a\x1f.pet_api.GetListOfTasksResponseB\x12Z\x10pkg/task_serviceb\x06proto3"
 
 var (
 	file_task_service_proto_rawDescOnce sync.Once
