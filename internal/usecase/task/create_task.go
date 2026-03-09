@@ -2,9 +2,13 @@ package task
 
 import (
 	"context"
-	"pet_api/internal/entity"
+	"todo-backend/internal/entity"
 )
 
-func CreateTask(ctx context.Context, task entity.Task) (string, error) {
-	return "", nil
+func (u *ToDoBackendUsecase) CreateTask(ctx context.Context, task entity.Task) (string, error) {
+	taskID, err := u.taskService.CreateTask(ctx, task)
+	if err != nil {
+		return "", entity.ErrInternalServerError
+	}
+	return taskID, nil
 }

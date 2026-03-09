@@ -1,9 +1,9 @@
 package task
 
 import (
-	"pet_api/internal/client/repo"
+	task_service2 "todo-backend/internal/client/task_service"
 )
 
 type ToDoBackendUsecase struct {
-	taskService repo.RepoClient
+	taskService task_service2.TaskService
 }

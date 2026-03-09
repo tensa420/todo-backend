@@ -1,4 +1,4 @@
-package task_service
+package handlers
 
 import "todo-backend/pkg/task_service"
 

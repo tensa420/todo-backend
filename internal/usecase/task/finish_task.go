@@ -4,8 +4,8 @@ import (
 	"context"
 )
 
-func (u *ToDoUsecase) FinishTask(ctx context.Context, taskID, userID string) error {
-	err := u.repoClient.FinishTask(ctx, ID)
+func (u *ToDoBackendUsecase) FinishTask(ctx context.Context, taskID, userID string) error {
+	err := u.taskService.FinishTask(ctx, taskID, userID)
 	if err != nil {
 		return err
 	}
