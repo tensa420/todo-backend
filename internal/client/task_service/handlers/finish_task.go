@@ -11,10 +11,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (t *TaskServiceClient) FinishTask(ctx context.Context, taskID, userID string) error {
+func (t *TaskServiceClient) FinishTask(ctx context.Context, taskUUID, userUUID string) error {
 	_, err := t.generatedClient.FinishTask(ctx, &task_service.FinishTaskRequest{
-		UserUUID: userID,
-		TaskUUID: taskID,
+		UserUUID: userUUID,
+		TaskUUID: taskUUID,
 	})
 	if err != nil {
 		st, ok := status.FromError(err)
@@ -28,6 +28,6 @@ func (t *TaskServiceClient) FinishTask(ctx context.Context, taskID, userID strin
 			return entity.ErrUnexpected
 		}
 	}
-	log.Printf("finish task %v %v", taskID, userID)
+	log.Printf("finish task %v %v", taskUUID, userUUID)
 	return nil
 }

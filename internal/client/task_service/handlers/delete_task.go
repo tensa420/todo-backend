@@ -11,10 +11,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (t *TaskServiceClient) DeleteTask(ctx context.Context, ID, userID string) error {
+func (t *TaskServiceClient) DeleteTask(ctx context.Context, taskUUID, userUUID string) error {
 	_, err := t.generatedClient.DeleteTask(ctx, &task_service.DeleteTaskRequest{
-		TaskUUID: ID,
-		UserUUID: userID,
+		TaskUUID: taskUUID,
+		UserUUID: userUUID,
 	})
 	if err != nil {
 		st, ok := status.FromError(err)
@@ -28,6 +28,6 @@ func (t *TaskServiceClient) DeleteTask(ctx context.Context, ID, userID string) e
 			return entity.ErrUnexpected
 		}
 	}
-	log.Printf("delete task %v %v", ID, userID)
+	log.Printf("delete task %v %v", taskUUID, userUUID)
 	return nil
 }

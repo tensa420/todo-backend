@@ -9,9 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-func (t *TaskServiceClient) GetListOfTasks(ctx context.Context, userID string) ([]entity.Task, error) {
+func (t *TaskServiceClient) GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error) {
 	resp, err := t.generatedClient.GetListOfTasks(ctx, &task_service.GetListOfTasksRequest{
-		UserUUID: userID,
+		UserUUID: userUUID,
 	})
 	if resp == nil || len(resp.Tasks) == 0 {
 		return []entity.Task{}, entity.ErrNotFound
@@ -30,6 +30,6 @@ func (t *TaskServiceClient) GetListOfTasks(ctx context.Context, userID string) (
 		})
 	}
 
-	log.Printf("get list tasks %v", userID)
+	log.Printf("get list tasks %v", userUUID)
 	return tasks, nil
 }

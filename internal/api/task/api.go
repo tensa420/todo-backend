@@ -7,7 +7,7 @@ import (
 
 type TaskServer struct {
 	useCase usecase.TaskUseCase
-	api.UnimplementedHandler
+	openapi.UnimplementedHandler
 }
 
 func NewTaskServer(useCase usecase.TaskUseCase) *TaskServer {
