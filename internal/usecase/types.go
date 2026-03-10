@@ -5,10 +5,10 @@ import (
 	"todo-backend/internal/entity"
 )
 
-type TaskUseCase interface {
-	DeleteTask(ctx context.Context, userID, taskID string) error
-	GetTask(ctx context.Context, userID, taskID string) (entity.Task, error)
-	GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error)
-	FinishTask(ctx context.Context, taskID, userID string) error
+type TaskService interface {
 	CreateTask(ctx context.Context, task entity.Task) (string, error)
+	DeleteTask(ctx context.Context, ID, userID string) error
+	FinishTask(ctx context.Context, taskID, userID string) error
+	GetListOfTasks(ctx context.Context, userID string) ([]entity.Task, error)
+	GetTask(ctx context.Context, taskUUID, userUUID string) (entity.Task, error)
 }

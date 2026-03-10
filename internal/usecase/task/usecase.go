@@ -1,13 +1,13 @@
 package task
 
 import (
-	"todo-backend/internal/client/task_service"
+	"todo-backend/internal/usecase"
 )
 
-type TaskUsecase struct {
-	taskService task_service.TaskService
+type TaskUseСase struct {
+	taskService usecase.TaskService
 }
 
-func NewTaskUsecase(taskService task_service.TaskService) *TaskUsecase {
-	return &TaskUsecase{taskService: taskService}
+func NewTaskUseСase(taskService usecase.TaskService) *TaskUseСase {
+	return &TaskUseСase{taskService: taskService}
 }

@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-func (u *TaskUsecase) FinishTask(ctx context.Context, taskID, userID string) error {
+func (u *TaskUseСase) FinishTask(ctx context.Context, taskID, userID string) error {
 	err := u.taskService.FinishTask(ctx, taskID, userID)
 	if err != nil {
 		return err

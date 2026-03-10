@@ -5,7 +5,7 @@ import (
 	"todo-backend/internal/entity"
 )
 
-func (u *TaskUsecase) GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error) {
+func (u *TaskUseСase) GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error) {
 	tasks, err := u.taskService.GetListOfTasks(ctx, userUUID)
 	if err != nil {
 		return nil, err

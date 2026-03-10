@@ -16,7 +16,7 @@ import (
 
 type diContainer struct {
 	server            *task.TaskServer
-	usecase           *task2.TaskUsecase
+	usecase           *task2.TaskUseСase
 	taskServiceClient *handlers.TaskServiceClient
 }
 
@@ -30,9 +30,9 @@ func (d *diContainer) Server(ctx context.Context) *task.TaskServer {
 	return d.server
 }
 
-func (d *diContainer) UseCase(ctx context.Context) *task2.TaskUsecase {
+func (d *diContainer) UseCase(ctx context.Context) *task2.TaskUseСase {
 	if d.usecase == nil {
-		d.usecase = task2.NewTaskUsecase(d.TaskServiceClient(ctx))
+		d.usecase = task2.NewTaskUseСase(d.TaskServiceClient(ctx))
 	}
 	return d.usecase
 }
