@@ -12,7 +12,7 @@ func (t *TaskServiceClient) CreateTask(ctx context.Context, task entity.Task) (s
 		Task: taskEntityToProto(task),
 	})
 	if err != nil {
-		return "", entity.ErrInternalServerError
+		return "", err
 	}
 	log.Printf("create task %v %v", task.UserUUID, task.Title)
 	return resp.TaskUUID, nil
