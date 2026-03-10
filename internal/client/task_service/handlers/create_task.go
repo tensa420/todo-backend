@@ -15,7 +15,7 @@ func (t *TaskServiceClient) CreateTask(ctx context.Context, task entity.Task) (s
 		return "", entity.ErrInternalServerError
 	}
 	log.Printf("create task %v %v", task.UserUUID, task.Title)
-	return resp.UUID, nil
+	return resp.TaskUUID, nil
 }
 
 func taskEntityToProto(task entity.Task) *task_service.Task {

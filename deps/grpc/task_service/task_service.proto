@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package pet_api;
-import "empty.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "pkg/task_service";
 
