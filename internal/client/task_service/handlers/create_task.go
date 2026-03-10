@@ -8,19 +8,21 @@ import (
 )
 
 func (t *TaskServiceClient) CreateTask(ctx context.Context, task entity.Task) (string, error) {
-	resp, err := t.generatedClient.CreateTask(ctx, TaskEntityToProto(task))
+	resp, err := t.generatedClient.CreateTask(ctx, &task_service.CreateTaskRequest{
+		Task: taskEntityToProto(task),
+	})
 	if err != nil {
 		return "", entity.ErrInternalServerError
 	}
 	log.Printf("create task %v %v", task.UserUUID, task.Title)
-	return resp.ID, nil
+	return resp.UUID, nil
 }
 
-func TaskEntityToProto(task entity.Task) *task_service.CreateTaskRequest {
-	return &task_service.CreateTaskRequest{
+func taskEntityToProto(task entity.Task) *task_service.Task {
+	return &task_service.Task{
 		Title:       task.Title,
 		Description: task.Description,
-		UserID:      task.UserUUID.String(),
-		Status:      task_service.Status_STATUS_NEW,
+		UserUUID:    task.UserUUID.String(),
+		Status:      task_service.TaskStatus_TASK_STATUS_NEW,
 	}
 }

@@ -11,7 +11,7 @@ import (
 
 func (t *TaskServiceClient) GetListOfTasks(ctx context.Context, userID string) ([]entity.Task, error) {
 	resp, err := t.generatedClient.GetListOfTasks(ctx, &task_service.GetListOfTasksRequest{
-		UserID: userID,
+		UserUUID: userID,
 	})
 	if resp == nil || len(resp.Tasks) == 0 {
 		return []entity.Task{}, entity.ErrNotFound
@@ -26,7 +26,7 @@ func (t *TaskServiceClient) GetListOfTasks(ctx context.Context, userID string) (
 			Status:      ConvertProtoStatusToEntityStatus(task.Status),
 			Description: task.Description,
 			Title:       task.Title,
-			TaskUUID:    uuid.MustParse(task.ID),
+			TaskUUID:    uuid.MustParse(task.TaskUUID),
 		})
 	}
 

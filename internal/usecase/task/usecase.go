@@ -8,6 +8,6 @@ type TaskUsecase struct {
 	taskService task_service.TaskService
 }
 
-func NewToDoBackendUsecase(taskService task_service.TaskService) *TaskUsecase {
+func NewTaskUsecase(taskService task_service.TaskService) *TaskUsecase {
 	return &TaskUsecase{taskService: taskService}
 }

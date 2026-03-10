@@ -6,11 +6,11 @@ import (
 )
 
 type TaskServer struct {
+	useCase usecase.TaskUseCase
 	api.UnimplementedHandler
-	useCase usecase.ToDoBackendUseCase
 }
 
-func NewApi(useCase usecase.ToDoBackendUseCase) *TaskServer {
+func NewTaskServer(useCase usecase.TaskUseCase) *TaskServer {
 	return &TaskServer{
 		useCase: useCase,
 	}

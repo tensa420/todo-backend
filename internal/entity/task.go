@@ -15,6 +15,6 @@ type Task struct {
 type TaskStatus string
 
 const (
-	TaskStatusDone TaskStatus = "finished"
-	TaskStatusNew  TaskStatus = "new"
+	TaskStatusFinished TaskStatus = "finished"
+	TaskStatusNew      TaskStatus = "new"
 )

@@ -6,7 +6,7 @@ import (
 )
 
 func (u *TaskUsecase) GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error) {
-	tasks, err := u.GetListOfTasks(ctx, userUUID)
+	tasks, err := u.taskService.GetListOfTasks(ctx, userUUID)
 	if err != nil {
 		return nil, err
 	}

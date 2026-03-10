@@ -3,7 +3,7 @@ syntax = "proto3";
 package pet_api;
 import "empty.proto";
 
-option go_package = "pkg/handlers";
+option go_package = "pkg/task_service";
 
 
 service TaskService {
@@ -15,45 +15,45 @@ service TaskService {
 }
 
 message CreateTaskRequest {
-  string userID = 1;
-  string Description = 2;
-  TaskStatus status = 3;
-  string title = 4;
+  Task task = 1;
 }
 message CreateTaskResponse {
-  string ID = 1;
+  string TaskUUID = 1;
 }
 
 message FinishTaskRequest {
-  string taskID = 1;
-  string userID = 2;
+  string taskUUID = 1;
+  string userUUID = 2;
 }
 
 message DeleteTaskRequest {
-  string taskID = 1;
-  string userID = 2;
+  string taskUUID = 1;
+  string userUUID = 2;
 }
 
 message GetTaskRequest {
-  string taskID = 1;
-  string userID = 2;
+  string taskUUID = 1;
+  string userUUID = 2;
 }
 message GetTaskResponse {
-   string ID = 1;
-   string Description = 2;
-   TaskStatus status = 3;
-   string title = 4;
+   Task task = 1;
 }
 
 message GetListOfTasksResponse {
-  repeated GetTaskResponse tasks = 1;
+  repeated Task tasks = 1;
 }
 message GetListOfTasksRequest {
-  string userID = 1;
+  string userUUID = 1;
 }
 
+message Task {
+  string TaskUUID = 1;
+  string UserUUID = 2;
+  string Description = 3;
+  TaskStatus status = 4;
+  string title = 5;
+}
 enum TaskStatus {
   TASK_STATUS_NEW = 0;
   TASK_STATUS_FINISHED = 1;
 }
-

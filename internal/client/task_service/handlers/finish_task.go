@@ -13,8 +13,8 @@ import (
 
 func (t *TaskServiceClient) FinishTask(ctx context.Context, taskID, userID string) error {
 	_, err := t.generatedClient.FinishTask(ctx, &task_service.FinishTaskRequest{
-		UserID: userID,
-		TaskID: taskID,
+		UserUUID: userID,
+		TaskUUID: taskID,
 	})
 	if err != nil {
 		st, ok := status.FromError(err)

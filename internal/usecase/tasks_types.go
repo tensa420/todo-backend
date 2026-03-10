@@ -5,7 +5,7 @@ import (
 	"todo-backend/internal/entity"
 )
 
-type ToDoBackendUseCase interface {
+type TaskUseCase interface {
 	DeleteTask(ctx context.Context, userID, taskID string) error
 	GetTask(ctx context.Context, userID, taskID string) (entity.Task, error)
 	GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error)

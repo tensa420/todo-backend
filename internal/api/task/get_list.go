@@ -8,8 +8,8 @@ import (
 	api "todo-backend/pkg/openapi"
 )
 
-func (a *TaskServer) HandleGetListOfTasks(ctx context.Context, req *api.GetListOfTasksRequest) (api.HandleGetListOfTasksRes, error) {
-	tasks, err := a.useCase.GetListOfTasks(ctx, req.UserUUID.String())
+func (s *TaskServer) HandleGetListOfTasks(ctx context.Context, req *api.GetListOfTasksRequest) (api.HandleGetListOfTasksRes, error) {
+	tasks, err := s.useCase.GetListOfTasks(ctx, req.UserUUID.String())
 	if err != nil {
 		if errors.Is(err, entity.ErrNotFound) {
 			return &api.HandleGetListOfTasksNotFound{

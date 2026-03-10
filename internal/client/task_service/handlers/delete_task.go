@@ -13,8 +13,8 @@ import (
 
 func (t *TaskServiceClient) DeleteTask(ctx context.Context, ID, userID string) error {
 	_, err := t.generatedClient.DeleteTask(ctx, &task_service.DeleteTaskRequest{
-		TaskID: ID,
-		UserID: userID,
+		TaskUUID: ID,
+		UserUUID: userID,
 	})
 	if err != nil {
 		st, ok := status.FromError(err)
