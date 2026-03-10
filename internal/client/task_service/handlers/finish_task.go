@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (r *TaskServiceClient) FinishTask(ctx context.Context, taskID, userID string) error {
-	_, err := r.generatedClient.FinishTask(ctx, &task_service.FinishTaskRequest{
+func (t *TaskServiceClient) FinishTask(ctx context.Context, taskID, userID string) error {
+	_, err := t.generatedClient.FinishTask(ctx, &task_service.FinishTaskRequest{
 		UserID: userID,
 		TaskID: taskID,
 	})
@@ -25,7 +25,7 @@ func (r *TaskServiceClient) FinishTask(ctx context.Context, taskID, userID strin
 		case codes.NotFound:
 			return entity.ErrNotFound
 		default:
-			return entity.ErrInternalServerError
+			return entity.ErrUnexpected
 		}
 	}
 	log.Printf("finish task %v %v", taskID, userID)

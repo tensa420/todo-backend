@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (r *TaskServiceClient) DeleteTask(ctx context.Context, ID, userID string) error {
-	_, err := r.generatedClient.DeleteTask(ctx, &task_service.DeleteTaskRequest{
+func (t *TaskServiceClient) DeleteTask(ctx context.Context, ID, userID string) error {
+	_, err := t.generatedClient.DeleteTask(ctx, &task_service.DeleteTaskRequest{
 		TaskID: ID,
 		UserID: userID,
 	})
@@ -24,8 +24,6 @@ func (r *TaskServiceClient) DeleteTask(ctx context.Context, ID, userID string) e
 		switch st.Code() {
 		case codes.NotFound:
 			return entity.ErrNotFound
-		case codes.Internal:
-			return entity.ErrInternalServerError
 		default:
 			return entity.ErrUnexpected
 		}

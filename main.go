@@ -6,10 +6,11 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"time"
 	task2 "todo-backend/internal/api/task"
 	"todo-backend/internal/client/task_service/handlers"
 	"todo-backend/internal/usecase/task"
-	"todo-backend/pkg/openapi"
+	api "todo-backend/pkg/openapi"
 	"todo-backend/pkg/task_service"
 
 	"github.com/joho/godotenv"
@@ -18,7 +19,7 @@ import (
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
 	err := godotenv.Load(".env")
@@ -32,11 +33,23 @@ func main() {
 	if err != nil {
 		log.Printf("failed to make connection")
 	}
-	generatedClient := task_service.NewTaskServiceClient(conn)
-	taskServiceClient := handlers.NewTaskServiceClient(generatedClient)
-	usecase := task.NewToDoBackendUsecase(taskServiceClient)
-	api := task2.NewApi(usecase)
-	openapi.Handler(api)
+	grpcClient := task_service.NewTaskServiceClient(conn)
+	taskServiceClient := handlers.NewTaskServiceClient(grpcClient)
+	useCase := task.NewToDoBackendUsecase(taskServiceClient)
+	apii := task2.NewApi(useCase)
+	handler, err := api.NewServer(apii)
+	srv := http.Server{
+		Addr:    "localhost:8080",
+		Handler: handler,
+	}
+	lis, err := net.Listen("tcp", "localhost:8080")
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	err = srv.Serve(lis)
+	if err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }
 func initTaskServiceGRPCConnection(ctx context.Context, addr string) (*grpc.ClientConn, error) {
 	conn, err := grpc.DialContext(

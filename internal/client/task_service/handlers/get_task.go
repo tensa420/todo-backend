@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *TaskServiceClient) GetTask(ctx context.Context, taskUUID, userUUID string) (entity.Task, error) {
-	task, err := r.generatedClient.GetTask(ctx, &task_service.GetTaskRequest{
+func (t *TaskServiceClient) GetTask(ctx context.Context, taskUUID, userUUID string) (entity.Task, error) {
+	task, err := t.generatedClient.GetTask(ctx, &task_service.GetTaskRequest{
 		TaskID: taskUUID,
 		UserID: userUUID,
 	})
@@ -17,19 +17,19 @@ func (r *TaskServiceClient) GetTask(ctx context.Context, taskUUID, userUUID stri
 		return entity.Task{}, entity.ErrNotFound
 	}
 	if err != nil {
-		return entity.Task{}, entity.ErrInternalServerError
+		return entity.Task{}, err
 	}
 	return entity.Task{
-		ID:          uuid.MustParse(task.ID),
-		Status:      ConvertProtoStatusToEntityStatus(task.Status.String()),
+		TaskUUID:    uuid.MustParse(task.ID),
+		Status:      ConvertProtoStatusToEntityStatus(task.Status),
 		Description: task.Description,
 		Title:       task.Title,
 	}, nil
 }
 
-func ConvertProtoStatusToEntityStatus(status string) entity.TaskStatus {
+func ConvertProtoStatusToEntityStatus(status task_service.Status) entity.TaskStatus {
 	switch status {
-	case "NEW":
+	case task_service.Status_STATUS_NEW:
 		return entity.TaskStatusNew
 	default:
 		return entity.TaskStatusDone

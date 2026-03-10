@@ -9,24 +9,24 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *TaskServiceClient) GetListOfTasks(ctx context.Context, userID string) ([]entity.Task, error) {
-	resp, err := r.generatedClient.GetListOfTasks(ctx, &task_service.GetListOfTasksRequest{
+func (t *TaskServiceClient) GetListOfTasks(ctx context.Context, userID string) ([]entity.Task, error) {
+	resp, err := t.generatedClient.GetListOfTasks(ctx, &task_service.GetListOfTasksRequest{
 		UserID: userID,
 	})
 	if resp == nil || len(resp.Tasks) == 0 {
-		return []entity.Task{}, nil
+		return []entity.Task{}, entity.ErrNotFound
 	}
 	if err != nil {
-		return nil, entity.ErrInternalServerError
+		return nil, err
 	}
 
 	tasks := make([]entity.Task, 0, len(resp.Tasks))
 	for _, task := range resp.GetTasks() {
 		tasks = append(tasks, entity.Task{
-			Status:      ConvertProtoStatusToEntityStatus(task.Status.String()),
+			Status:      ConvertProtoStatusToEntityStatus(task.Status),
 			Description: task.Description,
 			Title:       task.Title,
-			ID:          uuid.MustParse(task.ID),
+			TaskUUID:    uuid.MustParse(task.ID),
 		})
 	}
 

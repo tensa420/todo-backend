@@ -17,7 +17,7 @@ service TaskService {
 message CreateTaskRequest {
   string userID = 1;
   string Description = 2;
-  Status status = 3;
+  TaskStatus status = 3;
   string title = 4;
 }
 message CreateTaskResponse {
@@ -41,7 +41,7 @@ message GetTaskRequest {
 message GetTaskResponse {
    string ID = 1;
    string Description = 2;
-   Status status = 3;
+   TaskStatus status = 3;
    string title = 4;
 }
 
@@ -52,8 +52,8 @@ message GetListOfTasksRequest {
   string userID = 1;
 }
 
-enum Status {
-  STATUS_NEW = 0;
-  STATUS_FINISHED = 1;
+enum TaskStatus {
+  TASK_STATUS_NEW = 0;
+  TASK_STATUS_FINISHED = 1;
 }
 
