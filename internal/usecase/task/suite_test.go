@@ -3,7 +3,7 @@ package task
 import (
 	"context"
 	"testing"
-	"todo-backend/internal/api"
+	"todo-backend/internal/api/task"
 
 	"github.com/stretchr/testify/suite"
 )
@@ -12,7 +12,7 @@ type UseCaseSuite struct {
 	suite.Suite
 	service *TaskService
 	ctx     context.Context
-	useCase api.TaskUseCase
+	useCase task.TaskUseCaseTypes
 }
 
 func (s *UseCaseSuite) SetupTest() {

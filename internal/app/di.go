@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"time"
 	"todo-backend/internal/api/task"
 	"todo-backend/internal/client/task_service/handlers"
 	task2 "todo-backend/internal/usecase/task"
@@ -55,8 +56,10 @@ func (d *diContainer) TaskServiceClient(ctx context.Context) *handlers.TaskServi
 	return d.taskServiceClient
 }
 func initTaskServiceGRPCConnection(ctx context.Context, addr string) (*grpc.ClientConn, error) {
+	ctxTimeOut, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
 	conn, err := grpc.DialContext(
-		ctx,
+		ctxTimeOut,
 		addr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithBlock(),

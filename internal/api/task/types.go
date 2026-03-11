@@ -1,11 +1,11 @@
-package api
+package task
 
 import (
 	"context"
 	"todo-backend/internal/entity"
 )
 
-type TaskUseCase interface {
+type TaskUseCaseTypes interface {
 	DeleteTask(ctx context.Context, userID, taskID string) error
 	GetTask(ctx context.Context, userID, taskID string) (entity.Task, error)
 	GetListOfTasks(ctx context.Context, userUUID string) ([]entity.Task, error)

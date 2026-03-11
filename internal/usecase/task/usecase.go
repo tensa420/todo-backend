@@ -5,9 +5,9 @@ import (
 )
 
 type TaskUseСase struct {
-	taskService usecase.TaskService
+	taskService usecase.TaskServiceTypes
 }
 
-func NewTaskUseСase(taskService usecase.TaskService) *TaskUseСase {
+func NewTaskUseСase(taskService usecase.TaskServiceTypes) *TaskUseСase {
 	return &TaskUseСase{taskService: taskService}
 }

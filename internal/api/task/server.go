@@ -1,16 +1,15 @@
 package task
 
 import (
-	"todo-backend/internal/api"
 	"todo-backend/pkg/openapi"
 )
 
 type TaskServer struct {
-	useCase api.TaskUseCase
+	useCase TaskUseCaseTypes
 	openapi.UnimplementedHandler
 }
 
-func NewTaskServer(useCase api.TaskUseCase) *TaskServer {
+func NewTaskServer(useCase TaskUseCaseTypes) *TaskServer {
 	return &TaskServer{
 		useCase: useCase,
 	}

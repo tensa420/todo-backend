@@ -7,6 +7,9 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 	api "todo-backend/pkg/openapi"
 )
 
@@ -32,7 +35,7 @@ func (a *App) initDeps(ctx context.Context) error {
 	return nil
 }
 
-func (a *App) initDI(ctx context.Context) error {
+func (a *App) initDI(_ context.Context) error {
 	a.diContainer = NewdiContainer()
 	return nil
 }
@@ -43,19 +46,41 @@ func (a *App) RunHTTPServer(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
 	srv := &http.Server{
 		Addr:    net.JoinHostPort(os.Getenv("HTTP_HOST"), os.Getenv("HTTP_PORT")),
 		Handler: handler,
 	}
+
 	lis, err := net.Listen("tcp", srv.Addr)
 	if err != nil {
-		log.Printf("failed to listen: %v", err)
+		return fmt.Errorf("failed to listen: %w", err)
 	}
-	log.Printf("server started")
-	err = srv.Serve(lis)
-	if err != nil {
-		fmt.Printf("failed to serve: %v", err)
+
+	errChan := make(chan error, 1)
+
+	go func() {
+		log.Printf("server started on %s", srv.Addr)
+		if err = srv.Serve(lis); err != nil {
+			errChan <- err
+		}
+	}()
+
+	select {
+	case err := <-errChan:
+		return err
+	case <-ctx.Done():
 	}
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	log.Println("Shutting down server...")
+	if err = srv.Shutdown(shutdownCtx); err != nil {
+		return fmt.Errorf("failed to shutdown: %w", err)
+	}
+
+	log.Println("Server stopped gracefully")
 	return nil
 }
 func (a *App) Run(ctx context.Context) error {
@@ -63,5 +88,27 @@ func (a *App) Run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+func (a *App) gracefulShutdown(ctx context.Context, srv *http.Server) error {
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	select {
+	case sig := <-quit:
+		log.Println("Received signal:", sig)
+	case <-ctx.Done():
+		log.Println("Context cancelled")
+	}
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	log.Println("Shutting down server...")
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		return err
+	}
+
+	log.Println("Server stopped gracefully")
 	return nil
 }

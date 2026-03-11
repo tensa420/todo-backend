@@ -5,7 +5,7 @@ import (
 	"todo-backend/internal/entity"
 )
 
-type TaskService interface {
+type TaskServiceTypes interface {
 	CreateTask(ctx context.Context, task entity.Task) (string, error)
 	DeleteTask(ctx context.Context, ID, userID string) error
 	FinishTask(ctx context.Context, taskID, userID string) error

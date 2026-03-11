@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"log"
-	"time"
+	"os/signal"
+	"syscall"
 	"todo-backend/internal/app"
 
 	"github.com/joho/godotenv"
@@ -15,7 +16,7 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
 	srv, err := app.NewApp(ctx)
@@ -26,5 +27,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	cancel()
 }
